@@ -1,0 +1,42 @@
+#!/usr/bin/python
+'''
+printcli
+'''
+import sys
+import click
+
+from utils import paths
+from utils import commands
+from utils import prints
+
+
+
+@click.command()
+@click.option('-nsr', '--no-sync-repo', 'no_sync_repo', type=bool, default=False, show_default=True, is_flag=True, help='Disable sync from repo.')
+@click.option('-fsr', '--force-sync-repo', 'is_force_sync_repo', type=bool, default=False, show_default=True, is_flag=True, help='Force sync from repo.')
+@click.option('-l', '--list', 'is_list', type=bool, default=False, show_default=True, is_flag=True, help='list available printers.')
+@click.option('-p', '--printer', 'printer', type=str, default='', show_default=True, help='Printer name.')
+@click.option('-c', '--copies', 'copies', type=int, default=1, show_default=True, help='Number of copies.')
+@click.argument('path', type=str, default='')
+def _main(no_sync_repo, is_force_sync_repo, is_list, printer, copies, path):
+    '''
+    Print file using cups
+    '''
+    if not path:
+        prints.red(f"`path` is `{path}`")
+        sys.exit(1)
+
+    is_sync_repo = not no_sync_repo
+    resolved_path = paths.resolve_path(path)
+
+    folder_path = paths.get_folder_path(paths.resolve_link_path(__file__))
+
+    if is_sync_repo:
+        commands.run(f"python {paths.resolve_path(folder_path, 'sync.py')} {is_force_sync_repo}", True)
+    commands.run(f"python {paths.resolve_path(folder_path, 'printcli.py')} {is_list} \"{printer}\" {copies} \"{resolved_path}\"", True)
+
+
+
+if __name__ == '__main__':
+    # pylint: disable-next=no-value-for-parameter
+    _main()
