@@ -22,12 +22,8 @@ def _main(no_sync_repo, is_force_sync_repo, is_list, printer, copies, path):
     '''
     Print file using cups
     '''
-    if not path:
-        prints.red(f"`path` is `{path}`")
-        sys.exit(1)
-
     is_sync_repo = not no_sync_repo
-    resolved_path = paths.resolve_path(path)
+    resolved_path = (paths.resolve_path(path) if path else '')
 
     folder_path = paths.get_folder_path(paths.resolve_link_path(__file__))
 
