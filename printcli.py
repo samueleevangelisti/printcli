@@ -7,7 +7,6 @@ import click
 from utils import prints
 from utils import printers
 from utils import paths
-from utils import systemds
 
 
 
@@ -39,9 +38,6 @@ def _main(is_list, printer, copies, path):
     if paths.is_folder(path):
         prints.red(f"`{path}` is folder")
         sys.exit(1)
-
-    if not systemds.is_active('cups.service'):
-        systemds.start('cups.service')
 
     selected_printer = printer
     if not selected_printer:
