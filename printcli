@@ -2,12 +2,10 @@
 '''
 printcli
 '''
-import sys
 import click
 
 from utils import paths
 from utils import commands
-from utils import prints
 
 
 

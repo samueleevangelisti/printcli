@@ -87,3 +87,19 @@ def print_file(printer, file_path, copies):
     Connection().printFile(printer, file_path, paths.get_file_name(file_path), {
         'copies': str(copies)
     })
+
+
+
+def is_printing():
+    '''
+    Return true if cups has job in queue
+
+    Returns
+    -------
+    bool
+
+    Raises
+    ------
+    RuntimeError
+    '''
+    return bool(Connection().getJobs())

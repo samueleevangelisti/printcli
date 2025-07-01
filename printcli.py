@@ -2,11 +2,13 @@
 printcli.py
 '''
 import sys
+import time
 import click
 
 from utils import prints
 from utils import printers
 from utils import paths
+from utils import systemds
 
 
 
@@ -39,6 +41,9 @@ def _main(is_list, printer, copies, path):
         prints.red(f"`{path}` is folder")
         sys.exit(1)
 
+    if not systemds.is_active('cups.service'):
+        systemds.start('cups.socket', 'cups.service')
+
     selected_printer = printer
     if not selected_printer:
         printer_list = printers.list_printers()
@@ -52,6 +57,11 @@ def _main(is_list, printer, copies, path):
         selected_printer = printer_list[int(input('Printer: ')) - 1].name
 
     printers.print_file(selected_printer, path, copies)
+
+    while printers.is_printing():
+        time.sleep(3)
+
+    systemds.stop('cups.socket', 'cups.service')
 
 
 
