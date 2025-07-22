@@ -3,6 +3,7 @@ printcli.py
 '''
 import sys
 import time
+import json
 import click
 
 from utils import prints
@@ -16,8 +17,10 @@ from utils import systemds
 @click.argument('is-list', type=bool)
 @click.argument('printer', type=str)
 @click.argument('copies', type=int)
-@click.argument('path', type=str)
-def _main(is_list, printer, copies, path):
+@click.argument('path-list-str', type=str)
+def _main(is_list, printer, copies, path_list_str):
+    path_list = json.loads(path_list_str)
+
     if is_list:
         printer_list = printers.list_printers()
         name_len = len('name')
@@ -29,17 +32,18 @@ def _main(is_list, printer, copies, path):
             print(f"{printer.name}{' ' * (name_max_len - len(printer.name))}   {printer.description}{' ' * (description_max_len - len(printer.description))}   {printer.location}")
         sys.exit(0)
 
-    if not path:
-        prints.red(f"`path` is `{path}`")
+    if not path_list:
+        prints.red(f"`path_list` is `{path_list}`")
         sys.exit(1)
 
-    if not paths.is_entry(path):
-        prints.red(f"`{path}` not found")
-        sys.exit(1)
+    for path in path_list:
+        if not paths.is_entry(path):
+            prints.red(f"`{path}` not found")
+            sys.exit(1)
 
-    if paths.is_folder(path):
-        prints.red(f"`{path}` is folder")
-        sys.exit(1)
+        if paths.is_folder(path):
+            prints.red(f"`{path}` is folder")
+            sys.exit(1)
 
     if not systemds.is_active('cups.service'):
         systemds.start('cups.socket', 'cups.service')
@@ -56,7 +60,8 @@ def _main(is_list, printer, copies, path):
             print(f"[{index + 1:>2d}]   {printer.name}{' ' * (name_max_len - len(printer.name))}   {printer.description}{' ' * (description_max_len - len(printer.description))}   {printer.location}")
         selected_printer = printer_list[int(input('Printer: ')) - 1].name
 
-    printers.print_file(selected_printer, path, copies)
+    for path in path_list:
+        printers.print_file(selected_printer, path, copies)
 
     while printers.is_printing():
         time.sleep(3)

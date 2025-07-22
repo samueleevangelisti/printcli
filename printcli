@@ -2,6 +2,7 @@
 '''
 printcli
 '''
+import json
 import click
 
 from utils import paths
@@ -15,19 +16,19 @@ from utils import commands
 @click.option('-l', '--list', 'is_list', type=bool, default=False, show_default=True, is_flag=True, help='list available printers.')
 @click.option('-p', '--printer', 'printer', type=str, default='', show_default=True, help='Printer name.')
 @click.option('-c', '--copies', 'copies', type=int, default=1, show_default=True, help='Number of copies.')
-@click.argument('path', type=str, default='')
-def _main(no_sync_repo, is_force_sync_repo, is_list, printer, copies, path):
+@click.argument('path-list', type=str, nargs=-1)
+def _main(no_sync_repo, is_force_sync_repo, is_list, printer, copies, path_list):
     '''
     Print file using cups
     '''
     is_sync_repo = not no_sync_repo
-    resolved_path = (paths.resolve_path(path) if path else '')
+    resolved_path_list = [paths.resolve_path(path) for path in path_list]
 
     folder_path = paths.get_folder_path(paths.resolve_link_path(__file__))
 
     if is_sync_repo:
         commands.run(f"python {paths.resolve_path(folder_path, 'sync.py')} {is_force_sync_repo}", True)
-    commands.run(f"python {paths.resolve_path(folder_path, 'printcli.py')} {is_list} \"{printer}\" {copies} \"{resolved_path}\"", True)
+    commands.run(f"python {paths.resolve_path(folder_path, 'printcli.py')} {is_list} \"{printer}\" {copies} '{json.dumps(resolved_path_list)}'", True)
 
 
 
