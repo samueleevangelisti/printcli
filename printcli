@@ -16,7 +16,7 @@ from utils import commands
 @click.option('-l', '--list', 'is_list', type=bool, default=False, show_default=True, is_flag=True, help='list available printers.')
 @click.option('-p', '--printer', 'printer', type=str, default='', show_default=True, help='Printer name.')
 @click.option('-c', '--copies', 'copies', type=int, default=1, show_default=True, help='Number of copies.')
-@click.option('-ts', '--two-sides', 'is_two_sides', type=bool, default=False, show_default=True, help='Print in tow sides.')
+@click.option('-ts', '--two-sides', 'is_two_sides', type=bool, default=False, show_default=True, is_flag=True, help='Print in tow sides.')
 @click.argument('path-list', type=str, nargs=-1)
 def _main(no_sync_repo, is_force_sync_repo, is_list, printer, copies, is_two_sides, path_list):
     '''
