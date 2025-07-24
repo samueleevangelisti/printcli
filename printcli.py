@@ -17,8 +17,9 @@ from utils import systemds
 @click.argument('is-list', type=bool)
 @click.argument('printer', type=str)
 @click.argument('copies', type=int)
+@click.argument('is-two-sides', type=bool)
 @click.argument('path-list-str', type=str)
-def _main(is_list, printer, copies, path_list_str):
+def _main(is_list, printer, copies, is_two_sides, path_list_str):
     path_list = json.loads(path_list_str)
 
     if is_list:
@@ -61,7 +62,7 @@ def _main(is_list, printer, copies, path_list_str):
         selected_printer = printer_list[int(input('Printer: ')) - 1].name
 
     for path in path_list:
-        printers.print_file(selected_printer, path, copies)
+        printers.print_file(selected_printer, path, copies, is_two_sides)
 
     while printers.is_printing():
         time.sleep(3)

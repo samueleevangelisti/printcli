@@ -64,7 +64,7 @@ def show_default_printer():
 
 
 
-def print_file(printer, file_path, copies):
+def print_file(printer, file_path, copies, is_two_sides):
     '''
     Print a file using the specified printer
 
@@ -76,16 +76,21 @@ def print_file(printer, file_path, copies):
         Path of the file
     copies : int
         Number of copies
+    is_two_sides : bool
+        Two sides
 
     Raises
     ------
     RuntimeError
     '''
     if not configs.IS_PRINT:
-        logs.warning(f"configs.IS_PRINT: {configs.IS_PRINT}, printer: {printer}, file_path: {file_path}, copies: {copies}")
+        logs.warning(f"configs.IS_PRINT: {configs.IS_PRINT}, printer: {printer}, file_path: {file_path}, copies: {copies}, is_two_sides: {is_two_sides}")
         return
     Connection().printFile(printer, file_path, paths.get_file_name(file_path), {
-        'copies': str(copies)
+        'copies': str(copies),
+        **({
+            'sides': 'two-sided-long-edge'
+        } if is_two_sides else {})
     })
 
 
